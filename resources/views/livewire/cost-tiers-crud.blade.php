@@ -1,0 +1,156 @@
+<x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-600 leading-tight">
+        {{ __('Manage Cost Tiers') }}
+    </h2>
+</x-slot>
+<div class="py-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between pb-4">
+            <div class="flex flex-row items-center">
+                <x-input-small wire:model="query" id="query" class="block w-48 text-gray-600" type="text" placeholder="Search..." />
+                <div class="w-48 text-gray-600 flex flex-row items-center pl-6">
+                    <span class="pr-3">Per Page: </span>
+                    <select id="per_page" name="per_page" wire:model="perPage" class="block w-16 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option>5</option>
+                        <option>10</option>
+                        <option>15</option>
+                        <option>25</option>
+                        <option>50</option>
+                        <option>100</option>
+                    </select>
+                </div>
+            </div>
+            <button wire:click="createShowModal"
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-bold h-9 px-3 rounded inline-flex items-center mr-2 text-sm">
+                <img class="w-4 h-4 mr-2" src="{{ asset('images/edit-white.svg') }}"/>
+                <span class="pt-0.5">{{  __('Add New') }}</span>
+            </button>
+        </div>
+
+        {{-- The data table --}}
+        <div class="flex flex-col">
+            <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                    <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                            <tr>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                    Label
+                                </th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                    Minimum Charge
+                                </th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                    Cost Per Km
+                                </th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"></th>
+                            </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                            @if ($data->count())
+                                @foreach ($data as $item)
+                                    <tr class="text-gray-700 text-sm">
+                                        <td class="px-6 py-4">{{ $item->label }}</td>
+                                        <td class="px-6 py-4">R {{ sprintf("%.2f", $item->minimum_charge) }}</td>
+                                        <td class="px-6 py-4">R {{ sprintf("%.2f", $item->cost_per_km) }}</td>
+                                        <td class="px-6 py-4 flex justify-end">
+
+                                            <button wire:click="updateShowModal({{ $item->id }})"
+                                                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold h-9 px-3 rounded inline-flex items-center mr-4 text-sm">
+                                                <img class="w-4 h-4 mr-2" src="{{ asset('images/edit-white.svg') }}"/>
+                                                <span class="pt-0.5">{{ __('Edit') }}</span>
+                                            </button>
+                                            <button wire:click="deleteShowModal({{ $item->id }})"
+                                                    class="bg-red-500 hover:bg-red-600 text-white font-bold h-9 px-3 rounded inline-flex items-center mr-4 text-sm">
+                                                <img class="w-4 h-4 mr-2" src="{{ asset('images/delete-white.svg') }}"/>
+                                                <span class="pt-0.5">{{ __('Delete') }}</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td class="px-6 py-4 text-sm whitespace-no-wrap" colspan="4">No Results Found
+                                    </td>
+                                </tr>
+                            @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            {{ $data->links() }}
+        </div>
+
+        {{-- Modal Form --}}
+        <x-jet-dialog-modal wire:model="modalFormVisible">
+            <x-slot name="title">
+                <span class="text-gray-600">{{ $modelId ? __('Update Cost Tier') : __('Create New Cost Tier') }}</span>
+            </x-slot>
+
+            <x-slot name="content">
+                <div class="mt-4">
+                    <x-jet-label for="" value="{{ __('Label') }}"/>
+                    <x-jet-input wire:model="label" id="" class="block mt-1 w-full text-gray-600" type="text"/>
+                    <x-jet-input-error for="label" class="mt-2"/>
+                </div>
+                <div class="mt-4">
+                    <x-jet-label for="" value="{{ __('Minimum Charge') }}"/>
+                    <x-jet-input wire:model="minimum_charge" id="minimum_charge" class="block mt-1 w-full text-gray-600" type="text"/>
+                    <x-jet-input-error for="label" class="mt-2"/>
+                </div>
+                <div class="mt-4">
+                    <x-jet-label for="" value="{{ __('Cost Per Km') }}"/>
+                    <x-jet-input wire:model="cost_per_km" id="cost_per_km" class="block mt-1 w-full text-gray-600" type="text"/>
+                    <x-jet-input-error for="label" class="mt-2"/>
+                </div>
+            </x-slot>
+
+            <x-slot name="footer">
+                <button wire:click="$toggle('modalFormVisible')" wire:loading.attr="disabled"
+                        class="bg-red-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-4">
+                    <span>{{ __('Cancel') }}</span>
+                </button>
+
+                @if ($modelId)
+
+                    <button wire:click="update" wire:loading.attr="disabled"
+                            class="bg-blue-500 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-4">
+                        <span>{{ __('Update') }}</span>
+                    </button>
+                @else
+                    <button wire:click="create" wire:loading.attr="disabled"
+                            class="bg-blue-500 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-4">
+                        <span>{{ __('Create') }}</span>
+                    </button>
+                @endif
+            </x-slot>
+        </x-jet-dialog-modal>
+
+        {{-- The Delete Modal --}}
+        <x-jet-dialog-modal wire:model="modalConfirmDeleteVisible">
+            <x-slot name="title">
+                {{ __('Delete Cost Tier Item') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete this item?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-jet-secondary-button wire:click="$toggle('modalConfirmDeleteVisible')"
+                                        wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-jet-secondary-button>
+
+                <x-jet-danger-button class="ml-2" wire:click="delete" wire:loading.attr="disabled">
+                    {{ __('Delete Item') }}
+                </x-jet-danger-button>
+            </x-slot>
+        </x-jet-dialog-modal>
+    </div>
+</div>
