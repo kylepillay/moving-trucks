@@ -8,9 +8,12 @@ use App\Models\QuoteRequest;
 use App\Models\QuoteStatus;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Mediconesystems\LivewireDatatables\BooleanColumn;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
@@ -20,40 +23,111 @@ use Str;
 
 class Quotes extends LivewireDatatable
 {
-    public $model = QuoteRequest::class;
-    public $exportable = true;
-    public $route = '/admin/quotes';
+    public string $model = QuoteRequest::class;
+    public bool $exportable = true;
+    public string $route = '/admin/quotes';
 
-    public function columns()
+    private function matchColor (string $status_id): string
+    {
+        return match ($status_id) {
+            "1" => 'red',
+            "2" => 'green',
+            "3" => 'gray',
+        };
+    }
+
+    public function columns(): array
     {
         return [
             NumberColumn::name('id')->hide(),
 
-            NumberColumn::name('identifier')
-                ->label('ID'),
+            NumberColumn::callback(['identifier', 'status_id'], function ($identifier, $status_id)
+            {
+                $color = $this->matchColor($status_id);
 
-            Column::callback('id', 'getVersionCount')
-                ->label('Version'),
+                return view('partials.colored-status-text')->with([
+                    'text' => $identifier,
+                    'color' => $color
+                ]);
+            })->label('ID'),
 
-            Column::name('user.name')
-                ->label('Client')->filterable($this->users),
+            Column::callback(['id', 'status_id'], function ($id, $status_id)
+            {
+                $color = $this->matchColor($status_id);
 
-            DateColumn::callback('requested_date', 'getFormattedDate')
-                ->label('Date')
-                ->filterable(),
+                return view('partials.colored-status-text')->with([
+                    'text' => QuoteRequest::findOrFail($id)->versions()->count(),
+                    'color' => $color
+                ]);
+            })->label('Version'),
 
-            Column::name('timeslot')
-                ->label('Timeslot')
+            Column::callback(['user.name', 'status_id'], function ($userName, $status_id)
+            {
+                $color = $this->matchColor($status_id);
+
+                return view('partials.colored-status-text')->with([
+                    'text' => $userName,
+                    'color' => $color
+                ]);
+            })->label('Client')->filterable($this->users),
+
+            DateColumn::callback(['requested_date', 'status_id'], function ($requested_date, $status_id)
+            {
+                $color = $this->matchColor($status_id);
+
+                $formatted = new Carbon($requested_date);
+
+                return view('partials.colored-status-text')->with([
+                    'text' => $formatted->toFormattedDateString(),
+                    'color' => $color
+                ]);
+            })->label('Date')->filterable(),
+
+            Column::callback(['timeslot', 'status_id'], function ($timeslot, $status_id)
+            {
+                $color = $this->matchColor($status_id);
+
+                return view('partials.colored-status-text')->with([
+                    'text' => $timeslot,
+                    'color' => $color
+                ]);
+            })->label('Timeslot')
                 ->filterable(['Morning', 'Midday', 'Afternoon', 'Flexible']),
 
-            Column::callback('distance', 'getFormattedMileage')
-                ->label('Mileage'),
+            Column::callback(['distance', 'status_id'], function ($distance, $status_id)
+            {
+                $color = $this->matchColor($status_id);
 
-            Column::callback('from_address', 'getShortenedAddress')
-                ->label('Collection Address')->searchable(),
+                return view('partials.colored-status-text')->with([
+                    'text' => $distance,
+                    'color' => $color
+                ]);
+            })->label('Mileage'),
 
-            Column::callback('to_address', 'getShortenedAddress')
-                ->label('Delivery Address')->searchable(),
+            Column::callback(['from_address', 'status_id'], function ($from_address, $status_id)
+            {
+                $color = $this->matchColor($status_id);
+
+                $segments = Str::of($from_address)->split('/,+/')->all();
+
+                return view('partials.colored-status-text')->with([
+                    'text' => sizeof($segments) > 2 ? $segments[1].', '.$segments[2] : $segments[0],
+                    'color' => $color
+                ]);
+            })->label('Collection Address')->searchable(),
+
+            Column::callback(['to_address', 'status_id'], function ($to_address, $status_id)
+            {
+
+                $color = $this->matchColor($status_id);
+
+                $segments = Str::of($to_address)->split('/,+/')->all();
+
+                return view('partials.colored-status-text')->with([
+                    'text' => sizeof($segments) > 2 ? $segments[1].', '.$segments[2] : $segments[0],
+                    'color' => $color
+                ]);
+            })->label('Delivery Address')->searchable(),
         ];
     }
 
@@ -72,30 +146,6 @@ class Quotes extends LivewireDatatable
         }
     }
 
-    public function getVersionCount(int $id): string
-    {
-        return QuoteRequest::findOrFail($id)->versions()->count();
-    }
-
-    public function getFormattedDate(string $requested_date): string
-    {
-        $formatted = new Carbon($requested_date);
-
-        return $formatted->toFormattedDateString();
-    }
-
-    public function getShortenedAddress(string $address): string
-    {
-        $segments = Str::of($address)->split('/,+/')->all();
-
-        return sizeof($segments) > 2 ? $segments[1].', '.$segments[2] : $segments[0];
-    }
-
-    public function getFormattedMileage(string $distance): string
-    {
-        return $distance.' KM';
-    }
-
     /**
      * @return Collection
      */
@@ -111,4 +161,6 @@ class Quotes extends LivewireDatatable
     {
         return User::pluck('name');
     }
+
+
 }

@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="13d8075c-f88c-4b6d-81ee-a87e0741af72" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/database/seeders/VersionsTableSeeder.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/partials/colored-status-text.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Livewire/UpdateQuote.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Livewire/UpdateQuote.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_01_28_140408_create_quote_line_items_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_01_28_140408_create_quote_line_items_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/UsersTableSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/UsersTableSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/livewire/update-quote.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/livewire/update-quote.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Livewire/Quotes.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Livewire/Quotes.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -255,7 +251,8 @@
       <workItem from="1616903553841" duration="3783000" />
       <workItem from="1617069916478" duration="34823000" />
       <workItem from="1617530063761" duration="688000" />
-      <workItem from="1617530843904" duration="20911000" />
+      <workItem from="1617530843904" duration="25793000" />
+      <workItem from="1617606421457" duration="69000" />
     </task>
     <servers />
   </component>
