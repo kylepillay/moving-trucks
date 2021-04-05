@@ -353,9 +353,15 @@ class MultiStepForm extends Component
             $this->quoteRequest->user_id = $this->user->id;
             $this->quoteRequest->identifier = $this->user->identifier.'-'.strval(mt_rand(1000, 9999));
 
-            $this->quoteRequest->save();
-
             $volumeTotal = 0;
+
+            foreach ($this->selected_inventory as $key => $value) {
+                $inventoryItem = Inventory::findOrFail($key);
+                $volumeTotal += $inventoryItem->volume;
+            }
+
+            $this->quoteRequest->volume = $volumeTotal;
+            $this->quoteRequest->save();
 
             foreach ($this->selected_inventory as $key => $value) {
                 $lineItem = new QuoteLineItem([
@@ -363,12 +369,8 @@ class MultiStepForm extends Component
                     'quantity' => $value,
                     'inventory_id' => $key
                 ]);
-                $volumeTotal += $lineItem->inventoryItem->volume;
                 $lineItem->save();
             }
-
-            $this->quoteRequest->volume = $volumeTotal;
-            $this->quoteRequest->save();
 
             $this->currentStep = 16;
 

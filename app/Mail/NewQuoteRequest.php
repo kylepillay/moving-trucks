@@ -44,6 +44,6 @@ class NewQuoteRequest extends Mailable
                 'quote' => $this->quote,
                 'user' => $this->quote->user,
                 'inventory' => $this->inventory])->subject(
-                    $this->quote->quote_identifier .' || '. $this->quote->user->name . ' from ' . $this->quote->from_address . ' to ' . $this->quote->to_address . ' || ' . $this->quote->requested_date.' || Total Volume: '.$this->volumeTotal)->from($this->quote->user->email);
+                    $this->quote->identifier .' || '. $this->quote->user->name . ' from ' . $this->quote->from_address . ' to ' . $this->quote->to_address . ' || ' . $this->quote->requested_date.' || Total Volume: '.$this->volumeTotal)->from($this->quote->user->email);
     }
 }
