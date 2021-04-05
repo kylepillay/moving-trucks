@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire;
 
+use App\Mail\QuoteRequestRemind;
+use App\Mail\QuoteRequestUpdated;
 use App\Models\Inventory;
 use App\Models\QuoteLineItem;
 use App\Models\QuoteRequest;
@@ -116,9 +118,37 @@ class UpdateQuote extends Component
             $lineItem->save();
         }
 
+        if ($this->quote->price) {
+            $this->quote->status_id = 2;
+        }
         $this->quote->volume = $this->volumeTotal;
         $this->quote->save();
         $this->user->save();
+    }
+
+    /**
+     * The update function
+     *
+     * @return void
+     */
+    public function send()
+    {
+        \Mail::to(User::findOrFail($this->quote->user_id))->send(new QuoteRequestUpdated($this->quote));
+        $this->quote->status_id = 3;
+        $this->quote->save();
+        session()->flash('message', 'Quote update email successfully sent.');
+    }
+
+    /**
+     * The update function
+     *
+     * @return void
+     */
+    public function remind()
+    {
+        \Mail::to(User::findOrFail($this->quote->user_id))->send(new QuoteRequestRemind($this->quote));
+
+        session()->flash('message', 'Quote reminder successfully sent.');
     }
 
     /**

@@ -12,21 +12,30 @@
                             class="text-gray-500 font-medium">{{$quote->identifier.'-'.Str::padLeft($versionsIterable[sizeof($versionsIterable) - 1]['version_id'], 3 ,'000') }}</span></span>
             </div>
 
-            <div class="flex flex-col"><span class="text-gray-500 text-xl"><span class="font-bold mr-4">Estimate:</span><span
-                            class="{{ $quote->price ? 'text-green-600' : 'text-yellow-600' }} font-bold">{{ $quote->price ? 'R '.sprintf("%.2f", $quote->price) : 'Pending'  }}</span></span>
+            <div class="flex flex-col justify-center">
+                <span class="text-gray-500 text-xl"><span class="font-bold mr-4">Estimate:</span><span class="{{ $quote->price ? 'text-green-600' : 'text-yellow-600' }} font-bold">{{ $quote->price ? 'R '.sprintf("%.2f", $quote->price) : 'Pending'  }}</span></span>
             </div>
 
             <div class="flex flex-col">
-                <span class="text-gray-500 text-xl">
+                <div class="text-gray-500 text-xl flex flex-row items-center">
                     <span class="font-bold mr-4">Version:</span>
-                    <select class="mt-1 block w-full text-sm pl-4 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm py-2 px-6 text-lg"
+                    <select class="block w-48 text-sm pl-4 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm py-2 px-6 text-lg"
                             id="selectedVersion" wire:model="selectedVersion" wire:change="updateSelectedVersion">
                             @foreach($versionsIterable as $version)
                                 <option value="{{ $version['version_id'] }}">{{ $version['version_id'] }}</option>
                             @endforeach
                     </select>
-                </span>
+                </div>
             </div>
+
+            @if( $quote->status->id > 1)
+                <div class="flex flex-row items-center">
+                    <button wire:click="{{$quote->status->id === 2 ? "send" : "remind"}}" wire:loading.attr="disabled"
+                            class="bg-{{ $quote->status->id === 2 ? 'green' : 'gray'}}-500 hover:bg-blue-500 text-white font-bold py-2 px-8 rounded inline-flex items-center">
+                        <span>{{ $quote->status->action_label  }}</span>
+                    </button>
+                </div>
+            @endif
 
         </div>
         <div class="grid grid-cols-12 gap-4">
@@ -146,51 +155,5 @@
                 @endif
             </div>
         </div>
-
-        @if(Auth::user()->hasRole('admin'))
-            <button wire:click="$toggle('modalFormVisible')" wire:loading.attr="disabled"
-                    class="bg-red-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-4">
-                <span>{{ __('Cancel') }}</span>
-            </button>
-
-            @if ($modelId)
-
-                <button wire:click="update" wire:loading.attr="disabled"
-                        class="bg-blue-500 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-4">
-                    <span>{{ __('Update') }}</span>
-                </button>
-            @else
-                <button wire:click="create" wire:loading.attr="disabled"
-                        class="bg-blue-500 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-4">
-                    <span>{{ __('Create') }}</span>
-                </button>
-            @endif
-        @else
-            <button wire:click="$toggle('modalFormVisible')" wire:loading.attr="disabled"
-                    class="bg-red-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-4">
-                <span>{{ __('Close') }}</span>
-            </button>
-        @endif
     </div>
 </div>
-{{--The Delete Modal--}}
-<x-jet-dialog-modal wire:model="modalConfirmDeleteVisible">
-    <x-slot name="title">
-        {{ __('Delete Modal Title') }}
-    </x-slot>
-
-    <x-slot name="content">
-        {{ __('Are you sure you want to delete this item?') }}
-    </x-slot>
-
-    <x-slot name="footer">
-        <x-jet-secondary-button wire:click="$toggle('modalConfirmDeleteVisible')"
-                                wire:loading.attr="disabled">
-            {{ __('Cancel') }}
-        </x-jet-secondary-button>
-
-        <x-jet-danger-button class="ml-2" wire:click="delete" wire:loading.attr="disabled">
-            {{ __('Delete Item') }}
-        </x-jet-danger-button>
-    </x-slot>
-</x-jet-dialog-modal>

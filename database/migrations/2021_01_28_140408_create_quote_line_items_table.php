@@ -17,6 +17,7 @@ class CreateQuoteLineItemsTable extends Migration
             $table->id();
             $table->bigInteger('quote_request_id');
             $table->integer('quantity')->default(0);
+            $table->integer('version')->default(0);
             $table->boolean('is_additional')->default(false);
             $table->bigInteger('inventory_id');
             $table->timestamps();

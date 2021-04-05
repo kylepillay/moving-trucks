@@ -45,39 +45,5 @@ class UsersTableSeeder extends Seeder
 
         $adminUser->assignRole($adminRole);
         $adminUser->save();
-
-        $firstUser = new User([
-            'name' => 'Kyle Pillay',
-            'identifier' => 'BB666',
-            'email' => 'kylepillay@gmail.com',
-            'email_verified_at' => NULL,
-            'password' => '$2y$10$W.XBFGlXCAa97lUBs3ogoe23RtuD0SoviZ/OL/24muyl4zKUM8946',
-            'two_factor_secret' => NULL,
-            'two_factor_recovery_codes' => NULL,
-            'phone' => '0658707053',
-            'remember_token' => NULL,
-            'current_team_id' => NULL,
-            'profile_photo_path' => NULL,
-        ]);
-
-        $firstUser->assignRole($clientRole);
-        $firstUser->save();
-
-        $secondUser = new User([
-            'name' => 'Jeff Smith',
-            'identifier' => 'BB503',
-            'email' => 'jimmysteel@jimmyemailservice.com',
-            'email_verified_at' => NULL,
-            'password' => '$2y$10$ff38ELDolJs5vODE15nztO/7ClooYv.IZ6n8BdNtGD5p/XNcHf3i2',
-            'two_factor_secret' => NULL,
-            'two_factor_recovery_codes' => NULL,
-            'phone' => '0658707053',
-            'remember_token' => NULL,
-            'current_team_id' => NULL,
-            'profile_photo_path' => NULL,
-        ]);
-
-        $secondUser->assignRole($clientRole);
-        $secondUser->save();
     }
 }
