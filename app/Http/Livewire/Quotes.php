@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Mail\QuoteRequestRemind;
-use App\Mail\QuoteRequestUpdated;
 use App\Models\QuoteRequest;
 use App\Models\QuoteStatus;
 use App\Models\User;
@@ -19,7 +17,6 @@ use Str;
 
 class Quotes extends LivewireDatatable
 {
-    public string $model = QuoteRequest::class;
     public bool $exportable = true;
     public string $route = '/admin/quotes';
 
