@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire;
 
+use App\Mail\QuoteRequestRemind;
+use App\Mail\QuoteRequestUpdated;
 use App\Models\QuoteRequest;
 use App\Models\QuoteStatus;
 use App\Models\User;
@@ -15,19 +17,20 @@ use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\NumberColumn;
 use Str;
 
+function matchColor (string $status_id): string
+{
+    return match ($status_id) {
+        "1" => 'red',
+        "2" => 'green',
+        "3" => 'gray',
+    };
+}
+
 class Quotes extends LivewireDatatable
 {
+    public string $model = QuoteRequest::class;
     public bool $exportable = true;
-    public string $route = '/admin/quotes';
-
-    private function matchColor (string $status_id): string
-    {
-        return match ($status_id) {
-            "1" => 'red',
-            "2" => 'green',
-            "3" => 'gray',
-        };
-    }
+    public $route = '/admin/quotes';
 
     public function columns(): array
     {
@@ -36,7 +39,7 @@ class Quotes extends LivewireDatatable
 
             NumberColumn::callback(['identifier', 'status_id'], function ($identifier, $status_id)
             {
-                $color = $this->matchColor($status_id);
+                $color = matchColor($status_id);
 
                 return view('partials.colored-status-text')->with([
                     'text' => $identifier,
@@ -46,7 +49,7 @@ class Quotes extends LivewireDatatable
 
             Column::callback(['id', 'status_id'], function ($id, $status_id)
             {
-                $color = $this->matchColor($status_id);
+                $color = matchColor($status_id);
 
                 return view('partials.colored-status-text')->with([
                     'text' => QuoteRequest::findOrFail($id)->versions()->count(),
@@ -56,7 +59,7 @@ class Quotes extends LivewireDatatable
 
             Column::callback(['user.name', 'status_id'], function ($userName, $status_id)
             {
-                $color = $this->matchColor($status_id);
+                $color = matchColor($status_id);
 
                 return view('partials.colored-status-text')->with([
                     'text' => $userName,
@@ -66,7 +69,7 @@ class Quotes extends LivewireDatatable
 
             DateColumn::callback(['requested_date', 'status_id'], function ($requested_date, $status_id)
             {
-                $color = $this->matchColor($status_id);
+                $color = matchColor($status_id);
 
                 $formatted = new Carbon($requested_date);
 
@@ -78,7 +81,7 @@ class Quotes extends LivewireDatatable
 
             Column::callback(['timeslot', 'status_id'], function ($timeslot, $status_id)
             {
-                $color = $this->matchColor($status_id);
+                $color = matchColor($status_id);
 
                 return view('partials.colored-status-text')->with([
                     'text' => $timeslot,
@@ -89,7 +92,7 @@ class Quotes extends LivewireDatatable
 
             Column::callback(['distance', 'status_id'], function ($distance, $status_id)
             {
-                $color = $this->matchColor($status_id);
+                $color = matchColor($status_id);
 
                 return view('partials.colored-status-text')->with([
                     'text' => $distance,
@@ -99,7 +102,7 @@ class Quotes extends LivewireDatatable
 
             Column::callback(['from_address', 'status_id'], function ($from_address, $status_id)
             {
-                $color = $this->matchColor($status_id);
+                $color = matchColor($status_id);
 
                 $segments = Str::of($from_address)->split('/,+/')->all();
 
@@ -112,7 +115,7 @@ class Quotes extends LivewireDatatable
             Column::callback(['to_address', 'status_id'], function ($to_address, $status_id)
             {
 
-                $color = $this->matchColor($status_id);
+                $color = matchColor($status_id);
 
                 $segments = Str::of($to_address)->split('/,+/')->all();
 

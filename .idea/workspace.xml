@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="13d8075c-f88c-4b6d-81ee-a87e0741af72" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Livewire/Quotes.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Livewire/Quotes.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -250,7 +251,7 @@
       <workItem from="1617069916478" duration="34823000" />
       <workItem from="1617530063761" duration="688000" />
       <workItem from="1617530843904" duration="25793000" />
-      <workItem from="1617606421457" duration="748000" />
+      <workItem from="1617606421457" duration="1686000" />
     </task>
     <servers />
   </component>
