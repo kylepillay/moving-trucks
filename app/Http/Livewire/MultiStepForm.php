@@ -351,7 +351,7 @@ class MultiStepForm extends Component
             }
 
             $this->quoteRequest->user_id = $this->user->id;
-            $this->quoteRequest->identifier = $this->user->identifier.'-'.strval(mt_rand(1000, 9999));
+            $this->quoteRequest->identifier = $this->user->identifier.strval(mt_rand(1000, 9999));
 
             $volumeTotal = 0;
 

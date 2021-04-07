@@ -9,7 +9,7 @@
             <div class="flex flex-col">
                 <img class="mb-4 w-32" src="{{ asset('/images/moving-trucks-logo-dark.png') }}">
                 <span class="text-gray-600 font-bold text-xl">{{ __('Quote: ') }} <span
-                            class="text-gray-500 font-medium">{{$quote->identifier.'-'.Str::padLeft($versionsIterable[sizeof($versionsIterable) - 1]['version_id'], 3 ,'000') }}</span></span>
+                            class="text-gray-500 font-medium">{{$quote->identifier.Str::padLeft($versionsIterable[sizeof($versionsIterable) - 1]['version_id'], 3 ,'000') }}</span></span>
             </div>
 
             <div class="flex flex-col justify-center">
