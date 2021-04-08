@@ -28,8 +28,8 @@ function matchColor (string $status_id): string
 
 class Quotes extends LivewireDatatable
 {
-    public string $model = QuoteRequest::class;
-    public bool $exportable = true;
+    public $model = QuoteRequest::class;
+    public $exportable = true;
     public $route = '/admin/quotes';
 
     public function columns(): array
