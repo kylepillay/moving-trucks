@@ -13,28 +13,32 @@
             </div>
 
             <div class="flex flex-col justify-center">
-                <span class="text-gray-500 text-xl"><span class="font-bold mr-4">Estimate:</span><span class="{{ $quote->price ? 'text-green-600' : 'text-yellow-600' }} font-bold">{{ $quote->price ? 'R '.sprintf("%.2f", $quote->price) : 'Pending'  }}</span></span>
-            </div>
-
-            <div class="flex flex-col">
-                <div class="text-gray-500 text-xl flex flex-row items-center">
-                    <span class="font-bold mr-4">Version:</span>
-                    <select class="block w-48 text-sm pl-4 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm py-2 px-6 text-lg"
-                            id="selectedVersion" wire:model="selectedVersion" wire:change="updateSelectedVersion">
+                <span class="text-gray-500 text-2xl"><span class="font-bold mr-4">Estimate:</span><span
+                            class="{{ $quote->price ? 'text-green-600' : 'text-yellow-600' }} font-bold">{{ $quote->price ? 'R '.sprintf("%.2f", $quote->price) : 'Pending'  }}</span></span>
+                <div class="flex flex-col mt-4">
+                    <div class="text-gray-500 text-xl flex flex-row items-center">
+                        <span class="font-bold mr-4">Version:</span>
+                        <select class="block w-28 text-sm pl-4 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm py-1 px-4 text-lg"
+                                id="selectedVersion" wire:model="selectedVersion" wire:change="updateSelectedVersion">
                             @foreach($versionsIterable as $version)
                                 <option value="{{ $version['version_id'] }}">{{ $version['version_id'] }}</option>
                             @endforeach
-                    </select>
+                        </select>
+                    </div>
                 </div>
+
             </div>
 
-            @if( $quote->status->id > 1)
-                <div class="flex flex-row items-center">
-                    <button wire:click="{{$quote->status->id === 2 ? "send" : "remind"}}" wire:loading.attr="disabled"
-                            class="bg-{{ $quote->status->id === 2 ? 'green' : 'gray'}}-500 hover:bg-blue-500 text-white font-bold py-2 px-8 rounded inline-flex items-center">
-                        <span>{{ $quote->status->action_label  }}</span>
-                    </button>
-                </div>
+
+            @can('manage')
+                @if( $quote->status_id > 1)
+                    <div class="flex flex-row items-center">
+                        <button wire:click="remind" wire:loading.attr="disabled"
+                                class="text-xl bg-gray-500 hover:bg-blue-500 text-white font-bold py-4 px-10 rounded-xl inline-flex items-center">
+                            <span>Remind</span>
+                        </button>
+                    </div>
+                @endif
             @endif
 
         </div>
@@ -89,30 +93,32 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <tbody>
                                 @foreach($inventory as $item)
-                                    <div class="bg-gray-{{ $loop->even ? '200' : '100' }} flex flex-row rounded-md mb-2 ">
-                                        <div class="flex flex-1 items-center pl-3 text-sm">{{ $item['item'] }}</div>
-                                        <div class="w-36 py-2 mr-3 ml-2 flex flex-row items-center">
-                                            <img src="{{ asset('images/minus.svg') }}"
-                                                 class="w-5 h-5 active:opacity-50 cursor-pointer"
-                                                 wire:click="decrementItem({{ $item['id'] }})"/>
-                                            <input id="selected_inventory.{{ $item['id'] }}" type="number"
-                                                   class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm text-lg w-full mx-2 text-center"
-                                                   wire:model="selected_inventory.{{ $item['id'] }}"/>
-                                            <img src="{{ asset('images/add.svg') }}"
-                                                 wire:click="incrementItem({{ $item['id'] }})"
-                                                 class="w-5 h-5 active:opacity-50 cursor-pointer"/>
+                                    @if($selected_inventory[$item['id']] > 0)
+                                        <div class="bg-gray-200 flex flex-row rounded-md mb-2 ">
+                                            <div class="flex flex-1 items-center pl-3 text-sm">{{ $item['item'] }}</div>
+                                            <div class="w-36 py-2 mr-3 ml-2 flex flex-row items-center">
+                                                <img src="{{ asset('images/minus.svg') }}"
+                                                     class="w-5 h-5 active:opacity-50 cursor-pointer"
+                                                     wire:click="decrementItem({{ $item['id'] }})"/>
+                                                <input id="selected_inventory.{{ $item['id'] }}" type="number"
+                                                       class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm text-lg w-full mx-2 text-center"
+                                                       wire:model="selected_inventory.{{ $item['id'] }}"/>
+                                                <img src="{{ asset('images/add.svg') }}"
+                                                     wire:click="incrementItem({{ $item['id'] }})"
+                                                     class="w-5 h-5 active:opacity-50 cursor-pointer"/>
+                                            </div>
+                                            @endif
                                         </div>
-                                    </div>
-                                @endforeach
-                                @can('manage')
-                                    <tr class="bg-gray-200 text-gray-700 text-sm">
-                                        <td class="px-6 py-4">#</td>
-                                        <td class="px-6 py-4 font-bold">Total Volume:</td>
-                                        <td class="px-6 py-4"></td>
+                                        @endforeach
+                                        @can('manage')
+                                            <tr class="bg-gray-200 text-gray-700 text-sm">
+                                                <td class="px-6 py-4">#</td>
+                                                <td class="px-6 py-4 font-bold">Total Volume:</td>
+                                                <td class="px-6 py-4"></td>
 
-                                        <td class="px-6 py-4">{{ $volumeTotal }}</td>
-                                    </tr>
-                                @endif
+                                                <td class="px-6 py-4">{{ $volumeTotal }}</td>
+                                            </tr>
+                                        @endif
                                 </tbody>
                             </table>
                         </div>
@@ -145,8 +151,13 @@
                             </div>
                             <div class="w-full py-4">
                                 <x-jet-button wire:loading.attr="disabled"
-                                              class="bg-blue-500 hover:bg-blue-600 w-full" wire:click="update">
-                                    Update
+                                              class="bg-{{$quote->status_id === 1 ? 'green' : 'gray'}}-500 hover:bg-{{$quote->status_id === 1 ? 'green' : 'gray'}}-600 w-full"
+                                              wire:click="update">
+                                    @if($quote->status_id === 1)
+                                        Send
+                                    @elseif($quote->status_id === 2)
+                                        Remind
+                                    @endif
                                 </x-jet-button>
                             </div>
                         </div>

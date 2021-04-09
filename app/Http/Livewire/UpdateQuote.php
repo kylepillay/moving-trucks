@@ -76,7 +76,15 @@ class UpdateQuote extends Component
         $this->inventory = Inventory::all()->sortBy('position');
     }
 
+    public function hydrate() {
+        $this->updateSelectedVersion();
+
+        $this->inventory = Inventory::all()->sortBy('position');
+    }
+
     public function updateSelectedVersion() {
+        $this->versionsIterable = $this->quote->versions->reverse()->all();
+        $this->selectedVersion = $this->quote->versions->last()->version_id;
         $this->quote = $this->versions->where('version_id', $this->selectedVersion)->first()->getModel();
         $this->loadModel();
     }
@@ -124,6 +132,8 @@ class UpdateQuote extends Component
         $this->quote->volume = $this->volumeTotal;
         $this->quote->save();
         $this->user->save();
+
+        $this->render();
     }
 
     /**
